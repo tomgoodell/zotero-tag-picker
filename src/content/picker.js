@@ -3,23 +3,29 @@
 // This is a XUL window, so plain createElement() would make XUL elements
 const html = (name) => document.createElementNS("http://www.w3.org/1999/xhtml", name);
 const isMac = navigator.platform.startsWith("Mac");
+const accel = isMac ? "⌘" : "Ctrl+";
+// Drawing thousands of rows on every keystroke is slow; the rest appear as you type
+const MAX_ROWS = 500;
 
 var TagPickerDialog = {
 	io: null,
-	all: [],        // [{ tag, count }]
-	shown: [],      // rows currently listed: { tag, count, isNew }
-	chosen: [],     // tags picked so far
+	mode: "add",    // add | remove
+	lists: null,    // { add: [{ tag, count, color, position }], remove: [...] }
+	shown: [],      // rows currently listed: { tag, count, color, isNew }
+	chosen: [],     // tags picked so far (in the current mode)
 	newTags: [],    // chosen tags that weren't in the list
 	highlight: 0,
 	navigated: false, // arrowed through the list since the last search change
 
 	init() {
 		this.io = window.arguments[0];
-		this.all = this.io.list.map(e => ({ tag: e.tag, count: e.count }));
+		let copy = (list) => list.map(e => ({ tag: e.tag, count: e.count, color: e.color, position: e.position }));
+		this.lists = { add: copy(this.io.list), remove: copy(this.io.removeList) };
 
 		this.search = document.getElementById("tp-search");
 		this.listEl = document.getElementById("tp-list");
 		this.chosenEl = document.getElementById("tp-chosen");
+		this.applyBtn = document.getElementById("tp-apply");
 
 		if (this.io.warning) {
 			let w = document.getElementById("tp-warning");
@@ -29,14 +35,45 @@ var TagPickerDialog = {
 		let n = this.io.itemCount;
 		document.getElementById("tp-status").textContent =
 			`${n} item${n == 1 ? "" : "s"} selected · v${this.io.version}`;
-		document.getElementById("tp-hint").textContent =
-			`Click or Enter adds · Enter on empty box (or ${isMac ? "⌘" : "Ctrl+"}Enter) applies · Esc cancels`;
 
 		this.search.addEventListener("input", () => this.refilter());
 		window.addEventListener("keydown", (e) => this.onKey(e), true);
 		document.getElementById("tp-cancel").addEventListener("click", () => window.close());
-		document.getElementById("tp-apply").addEventListener("click", () => this.apply());
+		this.applyBtn.addEventListener("click", () => this.apply());
+		for (let m of ["add", "remove"]) {
+			document.getElementById("tp-mode-" + m).addEventListener("click", () => {
+				// Clicking the current mode again shouldn't throw away the picks
+				if (this.mode != m) this.setMode(m);
+				else this.search.focus();
+			});
+		}
 
+		this.setMode(this.io.mode == "remove" ? "remove" : "add");
+	},
+
+	get all() {
+		return this.lists[this.mode];
+	},
+
+	setMode(mode) {
+		this.mode = mode;
+		// Picks belong to one mode; switching starts fresh rather than mixing adds and removes
+		this.chosen = [];
+		this.newTags = [];
+		let adding = mode == "add";
+		document.title = adding ? "Add Tags" : "Remove Tags";
+		for (let m of ["add", "remove"]) {
+			let btn = document.getElementById("tp-mode-" + m);
+			btn.classList.toggle("selected", m == mode);
+			btn.setAttribute("aria-selected", m == mode);
+		}
+		document.documentElement.classList.toggle("tp-removing", !adding);
+		this.search.placeholder = adding ? "Search or type a new tag…" : "Search the tags on these items…";
+		document.getElementById("tp-chosen-label").textContent = adding ? "Adding:" : "Removing:";
+		this.applyBtn.textContent = adding ? "Add" : "Remove";
+		document.getElementById("tp-hint").textContent =
+			`Click or Enter picks · Enter on empty box (or ${accel}Enter) applies · ${accel}R switches Add/Remove · Esc cancels`;
+		this.search.value = "";
 		this.refilter();
 		this.renderChosen();
 		this.search.focus();
@@ -56,11 +93,11 @@ var TagPickerDialog = {
 			else if (t.includes(q)) inside.push(e);
 		}
 		this.shown = [...starts, ...wordStarts, ...inside];
-		// Offer the typed text as a new tag when nothing matches it exactly
-		if (q) {
+		// Offer the typed text as a new tag when nothing matches it exactly (Add mode only)
+		if (q && this.mode == "add") {
 			let typed = this.io.applyCase(this.query());
 			if (!this.all.some(e => e.tag.toLowerCase() == typed.toLowerCase())) {
-				this.shown.push({ tag: typed, count: 0, isNew: true });
+				this.shown.push({ tag: typed, count: 0, color: null, isNew: true });
 			}
 		}
 		this.highlight = 0;
@@ -68,23 +105,47 @@ var TagPickerDialog = {
 		this.renderList();
 	},
 
+	// A colored tag's color, as a small dot
+	dot(color) {
+		let d = html("span");
+		d.className = "tp-dot";
+		if (color) d.style.backgroundColor = color;
+		else d.classList.add("none");
+		return d;
+	},
+
 	renderList() {
 		this.listEl.replaceChildren();
-		this.shown.forEach((e, i) => {
+		if (!this.shown.length) {
+			let empty = html("div");
+			empty.className = "tp-empty";
+			empty.textContent = this.mode == "remove"
+				? (this.all.length ? "No matching tags on these items." : "These items have no tags.")
+				: "No tags yet — type one to create it.";
+			this.listEl.append(empty);
+			return;
+		}
+		// Rows that can't be drawn are still reachable by typing; keep the highlighted one in range
+		let limit = Math.max(MAX_ROWS, this.highlight + 1);
+		let anyColor = this.shown.some(e => e.color);
+		this.shown.slice(0, limit).forEach((e, i) => {
 			let row = html("div");
 			row.className = "tp-row";
 			if (i == this.highlight) row.classList.add("highlight");
 			if (this.chosen.includes(e.tag)) row.classList.add("chosen");
 			if (e.isNew) row.classList.add("new");
+			if (anyColor) row.append(this.dot(e.color));
 			let name = html("span");
 			name.className = "tp-name";
 			name.textContent = e.isNew ? `Create “${e.tag}”` : e.tag;
 			let count = html("span");
 			count.className = "tp-count";
-			count.textContent = e.isNew ? "new" : (e.count || "");
+			count.textContent = e.isNew ? "new"
+				: this.mode == "remove" ? `${e.count} of ${this.io.itemCount}`
+				: (e.count || "");
 			row.append(name, count);
 			row.addEventListener("click", (ev) => {
-				// One click adds. Ignore the 2nd click of a double-click: the list has
+				// One click picks. Ignore the 2nd click of a double-click: the list has
 				// already re-rendered, so it would land on a different tag.
 				if (ev.detail > 1) return;
 				this.highlight = i;
@@ -92,6 +153,12 @@ var TagPickerDialog = {
 			});
 			this.listEl.append(row);
 		});
+		if (this.shown.length > limit) {
+			let more = html("div");
+			more.className = "tp-empty";
+			more.textContent = `…and ${this.shown.length - limit} more. Type to narrow the list.`;
+			this.listEl.append(more);
+		}
 		this.listEl.children[this.highlight]?.scrollIntoView({ block: "nearest" });
 	},
 
@@ -107,17 +174,19 @@ var TagPickerDialog = {
 		for (let tag of this.chosen) {
 			let chip = html("span");
 			chip.className = "tp-chip";
+			let color = this.all.find(e => e.tag == tag)?.color;
+			if (color) chip.append(this.dot(color));
 			let label = html("span");
 			label.textContent = tag;
 			let x = html("span");
 			x.className = "tp-chip-x";
 			x.textContent = "×";
-			x.title = "Remove";
+			x.title = "Unpick";
 			x.addEventListener("click", () => this.unchoose(tag));
 			chip.append(label, x);
 			this.chosenEl.append(chip);
 		}
-		document.getElementById("tp-apply").disabled = !this.chosen.length;
+		this.applyBtn.disabled = !this.chosen.length;
 	},
 
 	pick() {
@@ -127,7 +196,7 @@ var TagPickerDialog = {
 			this.chosen.push(e.tag);
 			if (e.isNew) {
 				this.newTags.push(e.tag);
-				this.all.push({ tag: e.tag, count: 0 });
+				this.all.push({ tag: e.tag, count: 0, color: null, position: 0 });
 			}
 		}
 		if (this.search.value) {
@@ -160,17 +229,25 @@ var TagPickerDialog = {
 
 	apply() {
 		if (!this.chosen.length) return;
-		this.io.resultJSON = JSON.stringify({ tags: this.chosen, newTags: this.newTags });
+		this.io.resultJSON = JSON.stringify({ mode: this.mode, tags: this.chosen, newTags: this.newTags });
 		window.close();
 	},
 
 	onKey(e) {
+		let accelDown = isMac ? e.metaKey : e.ctrlKey;
+		if (accelDown && e.key.toLowerCase() == "r") {
+			e.preventDefault();
+			this.setMode(this.mode == "add" ? "remove" : "add");
+			return;
+		}
 		switch (e.key) {
 			case "Enter":
+				// A focused button handles Enter itself
+				if (e.target.localName == "button") return;
 				e.preventDefault();
-				// Ctrl+Enter (Cmd+Enter on a Mac) always applies; plain Enter adds the highlighted
+				// Ctrl+Enter (Cmd+Enter on a Mac) always applies; plain Enter picks the highlighted
 				// tag when you've typed or arrowed to one, and applies on an untouched empty box
-				if ((isMac ? e.metaKey : e.ctrlKey) || (!this.query() && !this.navigated)) this.apply();
+				if (accelDown || (!this.query() && !this.navigated)) this.apply();
 				else this.pick();
 				break;
 			case "Escape":

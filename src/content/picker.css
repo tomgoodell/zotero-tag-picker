@@ -13,6 +13,61 @@
 	font-size: 13px;
 }
 
+#tp-modes {
+	display: flex;
+	gap: 0;
+}
+
+.tp-mode {
+	flex: 1;
+	margin: 0;
+	padding: 4px 8px;
+	border: 1px solid color-mix(in srgb, CanvasText 30%, transparent);
+	background: Canvas;
+	color: CanvasText;
+}
+
+.tp-mode:first-child {
+	border-radius: 4px 0 0 4px;
+}
+
+.tp-mode:last-child {
+	border-radius: 0 4px 4px 0;
+	border-left: none;
+}
+
+.tp-mode.selected {
+	background: SelectedItem;
+	color: SelectedItemText;
+	border-color: SelectedItem;
+}
+
+/* Remove mode: tint the picks so it's obvious they're coming off */
+.tp-removing .tp-chip {
+	background: color-mix(in srgb, #c0392b 22%, Canvas);
+	text-decoration: line-through;
+}
+
+.tp-dot {
+	display: inline-block;
+	flex: none;
+	width: 9px;
+	height: 9px;
+	border-radius: 50%;
+	margin-right: 7px;
+	align-self: center;
+}
+
+.tp-dot.none {
+	visibility: hidden;
+}
+
+.tp-empty {
+	padding: 6px 8px;
+	opacity: 0.6;
+	font-style: italic;
+}
+
 #tp-search {
 	width: 100%;
 	box-sizing: border-box;
@@ -41,7 +96,6 @@
 
 .tp-row {
 	display: flex;
-	justify-content: space-between;
 	padding: 3px 8px;
 	cursor: default;
 }
@@ -57,6 +111,10 @@
 
 .tp-row.chosen .tp-name::before {
 	content: "✓ ";
+}
+
+.tp-name {
+	flex: 1;
 }
 
 .tp-count {

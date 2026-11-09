@@ -14,16 +14,23 @@ async function startup({ id, version, rootURI }) {
 		["content", "zotero-tag-picker", rootURI + "content/"]
 	]);
 
-	Zotero.PreferencePanes.register({
-		pluginID: id,
-		src: rootURI + "content/prefs.xhtml",
-		scripts: [rootURI + "content/prefs-pane.js"],
-		label: "Tag Picker"
-	});
+	// The settings pane is independent of the picker: if one fails, the other still loads
+	try {
+		Zotero.PreferencePanes.register({
+			pluginID: id,
+			src: rootURI + "content/prefs.xhtml",
+			scripts: [rootURI + "content/prefs-pane.js"],
+			label: "Tag Picker"
+		});
+	}
+	catch (e) {
+		Zotero.debug("Tag Picker: registering the settings pane failed: " + e);
+		Zotero.logError(e);
+	}
 
 	Services.scriptloader.loadSubScript(rootURI + "tagpicker.js");
 	TagPicker.init({ id, version, rootURI });
-	TagPicker.addToAllWindows();
+	TagPicker.start();
 }
 
 function onMainWindowLoad({ window }) {
@@ -35,7 +42,7 @@ function onMainWindowUnload({ window }) {
 }
 
 function shutdown() {
-	TagPicker?.removeFromAllWindows();
+	TagPicker?.stop();
 	TagPicker = undefined;
 	chromeHandle?.destruct();
 	chromeHandle = null;

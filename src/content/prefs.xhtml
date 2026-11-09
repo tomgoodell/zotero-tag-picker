@@ -6,8 +6,11 @@
 		<label><html:h2>Where tags come from</html:h2></label>
 		<radiogroup id="tp-source" preference="extensions.tagpicker.source">
 			<radio value="library" label="Tags already used in this library"/>
+			<description class="tp-choice-note">Every tag on at least one item in the library you're tagging in: My Library, or the group library the selected items belong to. Tags from your other libraries, tags only on items in the trash, and automatic tags (unless ticked below) are left out. Colored tags are always included. The list grows on its own as you tag.</description>
 			<radio value="file" label="A text file of tags (one per line)"/>
+			<description class="tp-choice-note">Only the tags in a file you keep, which is handy for a fixed vocabulary or for sharing one list across libraries and computers. Tags in your library that aren't in the file won't be offered.</description>
 			<radio value="both" label="Both, merged"/>
+			<description class="tp-choice-note">Everything from the library plus everything in the file, with duplicates shown once. Usage counts come from the library.</description>
 		</radiogroup>
 		<checkbox label="Library: include automatic tags (from journal databases), not just ones you added"
 			preference="extensions.tagpicker.includeAutomatic"/>
@@ -15,10 +18,11 @@
 			<label value="Tag file:"/>
 			<html:input id="tp-filepath" type="text" style="flex: 1"
 				preference="extensions.tagpicker.filePath"/>
-			<button label="Browse…" oncommand="TagPicker_Prefs.browse()"/>
+			<button id="tp-browse" label="Browse…"/>
 		</hbox>
 		<checkbox label="Save newly typed tags to the tag file (when it's a source)"
 			preference="extensions.tagpicker.saveNewToFile"/>
+		<description>These choices are for adding. Remove Tags always lists exactly the tags on the selected items.</description>
 	</groupbox>
 
 	<groupbox>
@@ -29,7 +33,7 @@
 			<radio value="title" label="Capitalize Each Word"/>
 			<radio value="asis" label="Exactly as typed (existing tags keep their own case)"/>
 		</radiogroup>
-		<description>Applies to every tag the picker adds, and to how the list is shown.</description>
+		<description>Applies to every tag the picker adds, and to how the list is shown. Colored tags always keep their exact name.</description>
 	</groupbox>
 
 	<groupbox>
@@ -38,15 +42,45 @@
 			<radio value="frequency" label="Most-used first"/>
 			<radio value="alpha" label="Alphabetical"/>
 		</radiogroup>
+		<checkbox label="Show colored tags first, in their number-key order"
+			preference="extensions.tagpicker.pinColored"/>
 	</groupbox>
 
 	<groupbox>
-		<label><html:h2>Keyboard shortcut</html:h2></label>
-		<hbox align="center">
-			<label value="Shortcut:"/>
-			<html:input type="text" size="20" preference="extensions.tagpicker.shortcut"/>
-		</hbox>
-		<description style="font-weight: bold">Type the shortcut out as text, such as Ctrl+Alt+T. Pressing the keys in this box does not record them.</description>
-		<description>The default, Accel+Alt+T, is Ctrl+Alt+T on Windows and Linux and Cmd+Option+T on a Mac. Other examples: F13, Shift+F13, Ctrl+Shift+E, Cmd+Option+T. Leave empty for none. "Add Tags…" is also on the item right-click menu.</description>
+		<label><html:h2>Keyboard shortcuts</html:h2></label>
+		<description>Click a box, then press the keys you want. Backspace clears it; Esc leaves it as it was.</description>
+		<html:div class="tp-shortcut-grid">
+			<label value="Add tags:"/>
+			<html:input id="tp-shortcut" class="tp-recorder" type="text" readonly="readonly"
+				preference="extensions.tagpicker.shortcut"/>
+			<button id="tp-shortcut-clear" label="Clear"/>
+			<label value="Remove tags:"/>
+			<html:input id="tp-remove-shortcut" class="tp-recorder" type="text" readonly="readonly"
+				preference="extensions.tagpicker.removeShortcut"/>
+			<button id="tp-remove-shortcut-clear" label="Clear"/>
+		</html:div>
+		<description id="tp-shortcut-message" style="font-weight: bold" hidden="true"/>
+		<description>The standard Add shortcut is Ctrl+Alt+T (Cmd+Option+T on a Mac). "Add Tags…" and "Remove Tags…" are also on the item right-click menu. To reverse a change, use Edit › Undo.</description>
 	</groupbox>
+
+	<html:style>
+		.tp-shortcut-grid {
+			display: grid;
+			grid-template-columns: max-content 14em max-content;
+			gap: 6px 8px;
+			align-items: center;
+			margin: 6px 0;
+		}
+		.tp-recorder {
+			cursor: pointer;
+		}
+		.tp-choice-note {
+			margin: 0 0 6px 26px;
+			font-size: 0.92em;
+			opacity: 0.8;
+		}
+		.tp-recorder.recording {
+			outline: 2px solid SelectedItem;
+		}
+	</html:style>
 </vbox>

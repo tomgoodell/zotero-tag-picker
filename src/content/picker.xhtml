@@ -7,7 +7,7 @@
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	id="zotero-tag-picker-dialog"
-	title="Add Tags"
+	title="Tag Picker"
 	width="460"
 	height="560"
 	persist="screenX screenY width height"
@@ -16,14 +16,18 @@
 	<script src="chrome://zotero-tag-picker/content/picker.js"/>
 
 	<html:div id="tp-root">
+		<html:div id="tp-modes" role="tablist">
+			<html:button id="tp-mode-add" class="tp-mode" role="tab">Add tags</html:button>
+			<html:button id="tp-mode-remove" class="tp-mode" role="tab">Remove tags</html:button>
+		</html:div>
 		<html:div id="tp-header">
-			<html:input id="tp-search" type="text" placeholder="Search or type a new tag…" autocomplete="off"/>
-			<html:div id="tp-hint">Click or Enter adds · Enter on empty box (or Ctrl+Enter) applies · Esc cancels</html:div>
+			<html:input id="tp-search" type="text" autocomplete="off"/>
+			<html:div id="tp-hint"/>
 			<html:div id="tp-warning" hidden="hidden"/>
 		</html:div>
 		<html:div id="tp-list" role="listbox" tabindex="-1"/>
 		<html:div id="tp-chosen-row">
-			<html:span id="tp-chosen-label">Adding:</html:span>
+			<html:span id="tp-chosen-label"/>
 			<html:div id="tp-chosen"/>
 		</html:div>
 		<html:div id="tp-footer">
