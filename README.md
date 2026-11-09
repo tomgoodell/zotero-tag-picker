@@ -44,7 +44,7 @@ Open **Edit → Settings** (Mac: **Zotero → Settings**) and choose **Tag Picke
   - You can also include automatic tags (the ones added by journal databases), and choose whether new tags you type are saved to the text file.
 - **Capitalization**: always lowercase (the default), ALWAYS UPPERCASE, Capitalize Each Word, or exactly as typed. Existing tags are shown and added in the chosen style.
 - **List order**: most-used first, or alphabetical.
-- **Keyboard shortcut**: type a combination such as `Ctrl+Shift+E`, `F13` or `Cmd+Option+T`.
+- **Keyboard shortcut**: type the combination out as text, such as `Ctrl+Shift+E`, `F13` or `Cmd+Option+T`. Pressing the keys in the box doesn't record them.
   - `Accel` means Ctrl on Windows and Linux, and Cmd on a Mac.
   - Leave the box empty for no shortcut. The right-click menu still works.
 
