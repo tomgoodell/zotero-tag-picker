@@ -340,6 +340,8 @@ TagPicker = {
 			Zotero.alert(win, "Tag Picker", "This library is read-only.");
 			return;
 		}
+		// Where the keyboard focus was (usually the item list), to hand it back afterwards
+		let prevFocus = win.document.activeElement;
 		let colors = this.libraryColors(libraryID);
 		let { list, warning } = await this.buildList(libraryID, colors);
 		let io = {
@@ -362,11 +364,11 @@ TagPicker = {
 
 		if (result.mode == "remove") {
 			let changed = await this.removeTags(items, result.tags);
-			this.notify(win, `Removed ${this._tagWords(result.tags)} from ${this._itemWords(changed)}.`, changed);
+			this.notify(win, `Removed ${this._tagWords(result.tags)} from ${this._itemWords(changed)}.`, changed, prevFocus);
 			return;
 		}
 		let changed = await this.applyTags(items, result.tags);
-		this.notify(win, `Added ${this._tagWords(result.tags)} to ${this._itemWords(changed)}.`, changed);
+		this.notify(win, `Added ${this._tagWords(result.tags)} to ${this._itemWords(changed)}.`, changed, prevFocus);
 		let source = this.pref("source");
 		if (result.newTags.length && this.pref("saveNewToFile") && (source == "file" || source == "both")) {
 			try {
@@ -438,7 +440,7 @@ TagPicker = {
 	},
 
 	// Brief confirmation in the corner of the Zotero window
-	notify(win, text, changed) {
+	notify(win, text, changed, prevFocus) {
 		this._try("showing the confirmation", () => {
 			let pw = new Zotero.ProgressWindow({ window: win });
 			pw.changeHeadline("Tag Picker");
@@ -454,5 +456,13 @@ TagPicker = {
 			pw.show();
 			pw.startCloseTimer(changed ? 5000 : 3000);
 		});
+		// On Windows the confirmation is its own window and takes the keyboard focus,
+		// so Ctrl+Z (undo) would go to it instead of the library. Hand the focus back
+		// once it has opened (it loads asynchronously, hence the repeats).
+		let refocus = () => this._try("restoring focus", () => {
+			win.focus();
+			if (prevFocus?.isConnected) prevFocus.focus();
+		});
+		for (let ms of [0, 100, 300, 700]) win.setTimeout(refocus, ms);
 	}
 };

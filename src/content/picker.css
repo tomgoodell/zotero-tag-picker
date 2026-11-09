@@ -18,28 +18,48 @@
 	gap: 0;
 }
 
-.tp-mode {
+/* The ID in each selector outranks Zotero's own button styles, which otherwise
+   paint both buttons alike */
+#tp-modes .tp-mode {
+	appearance: none;
 	flex: 1;
 	margin: 0;
-	padding: 4px 8px;
+	padding: 5px 8px;
 	border: 1px solid color-mix(in srgb, CanvasText 30%, transparent);
-	background: Canvas;
-	color: CanvasText;
+	background: color-mix(in srgb, CanvasText 6%, Canvas);
+	color: color-mix(in srgb, CanvasText 65%, transparent);
+	font-weight: normal;
 }
 
-.tp-mode:first-child {
+#tp-modes .tp-mode:first-child {
 	border-radius: 4px 0 0 4px;
 }
 
-.tp-mode:last-child {
+#tp-modes .tp-mode:last-child {
 	border-radius: 0 4px 4px 0;
 	border-left: none;
 }
 
-.tp-mode.selected {
+#tp-modes .tp-mode:hover {
+	background: color-mix(in srgb, SelectedItem 15%, Canvas);
+}
+
+#tp-modes .tp-mode.selected {
 	background: SelectedItem;
 	color: SelectedItemText;
 	border-color: SelectedItem;
+	font-weight: bold;
+}
+
+#tp-modes .tp-mode.selected::before {
+	content: "✓ ";
+}
+
+/* Remove mode: red, so it's obvious tags are coming off */
+.tp-removing #tp-modes .tp-mode.selected {
+	background: #c0392b;
+	border-color: #c0392b;
+	color: #fff;
 }
 
 /* Remove mode: tint the picks so it's obvious they're coming off */

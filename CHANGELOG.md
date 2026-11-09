@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.0 — first public release
+## 1.2.1 — first public release
 
 - Search-and-pick window for adding tags to every selected item at once.
 - **Remove mode**: pick from the tags on the selected items and take them off all of them. Switch with the buttons at the top, or Ctrl+R (Cmd+R on a Mac).
