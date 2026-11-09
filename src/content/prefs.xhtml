@@ -1,0 +1,51 @@
+<vbox id="zotero-prefpane-tag-picker"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+
+	<groupbox>
+		<label><html:h2>Where tags come from</html:h2></label>
+		<radiogroup id="tp-source" preference="extensions.tagpicker.source">
+			<radio value="library" label="Tags already used in this library"/>
+			<radio value="file" label="A text file of tags (one per line)"/>
+			<radio value="both" label="Both, merged"/>
+		</radiogroup>
+		<checkbox label="Library: include automatic tags (from journal databases), not just ones you added"
+			preference="extensions.tagpicker.includeAutomatic"/>
+		<hbox align="center">
+			<label value="Tag file:"/>
+			<html:input id="tp-filepath" type="text" style="flex: 1"
+				preference="extensions.tagpicker.filePath"/>
+			<button label="Browse…" oncommand="TagPicker_Prefs.browse()"/>
+		</hbox>
+		<checkbox label="Save newly typed tags to the tag file (when it's a source)"
+			preference="extensions.tagpicker.saveNewToFile"/>
+	</groupbox>
+
+	<groupbox>
+		<label><html:h2>Capitalization</html:h2></label>
+		<radiogroup preference="extensions.tagpicker.caseMode">
+			<radio value="lower" label="always lowercase"/>
+			<radio value="upper" label="ALWAYS UPPERCASE"/>
+			<radio value="title" label="Capitalize Each Word"/>
+			<radio value="asis" label="Exactly as typed (existing tags keep their own case)"/>
+		</radiogroup>
+		<description>Applies to every tag the picker adds, and to how the list is shown.</description>
+	</groupbox>
+
+	<groupbox>
+		<label><html:h2>List order</html:h2></label>
+		<radiogroup preference="extensions.tagpicker.sortOrder">
+			<radio value="frequency" label="Most-used first"/>
+			<radio value="alpha" label="Alphabetical"/>
+		</radiogroup>
+	</groupbox>
+
+	<groupbox>
+		<label><html:h2>Keyboard shortcut</html:h2></label>
+		<hbox align="center">
+			<label value="Shortcut:"/>
+			<html:input type="text" size="20" preference="extensions.tagpicker.shortcut"/>
+		</hbox>
+		<description>The default, Accel+Alt+T, is Ctrl+Alt+T on Windows and Linux and Cmd+Option+T on a Mac. Other examples: F13, Shift+F13, Ctrl+Shift+E, Cmd+Option+T. Leave empty for none. "Add Tags…" is also on the item right-click menu.</description>
+	</groupbox>
+</vbox>

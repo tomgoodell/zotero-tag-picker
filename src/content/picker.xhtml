@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/"?>
+<?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-tag-picker/content/picker.css" type="text/css"?>
+
+<window
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	id="zotero-tag-picker-dialog"
+	title="Add Tags"
+	width="460"
+	height="560"
+	persist="screenX screenY width height"
+	onload="TagPickerDialog.init()">
+
+	<script src="chrome://zotero-tag-picker/content/picker.js"/>
+
+	<html:div id="tp-root">
+		<html:div id="tp-header">
+			<html:input id="tp-search" type="text" placeholder="Search or type a new tag…" autocomplete="off"/>
+			<html:div id="tp-hint">Click or Enter adds · Enter on empty box (or Ctrl+Enter) applies · Esc cancels</html:div>
+			<html:div id="tp-warning" hidden="hidden"/>
+		</html:div>
+		<html:div id="tp-list" role="listbox" tabindex="-1"/>
+		<html:div id="tp-chosen-row">
+			<html:span id="tp-chosen-label">Adding:</html:span>
+			<html:div id="tp-chosen"/>
+		</html:div>
+		<html:div id="tp-footer">
+			<html:span id="tp-status"/>
+			<html:button id="tp-cancel">Cancel</html:button>
+			<html:button id="tp-apply" class="primary">Add</html:button>
+		</html:div>
+	</html:div>
+</window>

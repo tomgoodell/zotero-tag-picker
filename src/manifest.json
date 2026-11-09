@@ -1,0 +1,16 @@
+{
+  "manifest_version": 2,
+  "name": "Tag Picker",
+  "version": "1.1.0",
+  "description": "Search-and-pick tags for all selected items, from a keyboard shortcut or the item menu.",
+  "author": "Tom Goodell",
+  "homepage_url": "https://github.com/tomgoodell/zotero-tag-picker",
+  "applications": {
+    "zotero": {
+      "id": "tag-picker@tomgoodell.github.io",
+      "update_url": "https://raw.githubusercontent.com/tomgoodell/zotero-tag-picker/main/updates.json",
+      "strict_min_version": "10.0",
+      "strict_max_version": "10.*"
+    }
+  }
+}
