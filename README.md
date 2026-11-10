@@ -62,6 +62,10 @@ Open **Edit → Settings** (Mac: **Zotero → Settings**) and choose **Tag Picke
 
 Changes take effect the next time you open the picker. The **Tag Picker Help…** button at the top of the pane explains every setting.
 
+## Support
+
+I made Tag Picker for my own use and am sharing it as-is, in case it's useful to others. My time to maintain it is limited: bug reports in [Issues](https://github.com/tomgoodell/zotero-tag-picker/issues) are welcome, but I can't promise replies or fixes. It hasn't been tested on macOS or Linux, so reports from those systems are especially helpful. It's MIT-licensed, so you're free to adapt it or carry it on yourself.
+
 ## Privacy
 
 Tag Picker works entirely inside Zotero. It sends nothing over the network. The only file it reads or writes is the tag file you choose in its settings, if any.
@@ -75,6 +79,8 @@ python build.py
 ```
 
 This writes `build/zotero-tag-picker-<version>.xpi` and updates `updates.json`.
+
+To publish a version: bump `version` in `src/manifest.json`, add a matching section to `CHANGELOG.md`, commit, then run `python release.py`. It builds, pushes, and creates the GitHub release with the `.xpi` attached.
 
 ## License
 
