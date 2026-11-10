@@ -39,6 +39,7 @@ var TagPickerDialog = {
 		this.search.addEventListener("input", () => this.refilter());
 		window.addEventListener("keydown", (e) => this.onKey(e), true);
 		document.getElementById("tp-cancel").addEventListener("click", () => window.close());
+		document.getElementById("tp-help").addEventListener("click", () => this.help());
 		this.applyBtn.addEventListener("click", () => this.apply());
 		for (let m of ["add", "remove"]) {
 			document.getElementById("tp-mode-" + m).addEventListener("click", () => {
@@ -72,7 +73,7 @@ var TagPickerDialog = {
 		document.getElementById("tp-chosen-label").textContent = adding ? "Adding:" : "Removing:";
 		this.applyBtn.textContent = adding ? "Add" : "Remove";
 		document.getElementById("tp-hint").textContent =
-			`Click or Enter picks · Enter on empty box (or ${accel}Enter) applies · ${accel}R switches Add/Remove · Esc cancels`;
+			`Click or Enter picks · Enter on empty box (or ${accel}Enter) applies · ${accel}R switches Add/Remove · Esc cancels · F1 help`;
 		this.search.value = "";
 		this.refilter();
 		this.renderChosen();
@@ -227,6 +228,13 @@ var TagPickerDialog = {
 		this.renderList();
 	},
 
+	help() {
+		// Modal too, so it sits on top of this window instead of behind it
+		window.openDialog("chrome://zotero-tag-picker/content/help.xhtml", "tag-picker-help",
+			"chrome,modal,centerscreen,resizable,width=580,height=640");
+		this.search.focus();
+	},
+
 	apply() {
 		if (!this.chosen.length) return;
 		this.io.resultJSON = JSON.stringify({ mode: this.mode, tags: this.chosen, newTags: this.newTags });
@@ -241,6 +249,10 @@ var TagPickerDialog = {
 			return;
 		}
 		switch (e.key) {
+			case "F1":
+				e.preventDefault();
+				this.help();
+				break;
 			case "Enter":
 				// A focused button handles Enter itself
 				if (e.target.localName == "button") return;

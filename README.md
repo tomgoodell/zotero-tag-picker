@@ -36,6 +36,7 @@ Zotero checks for new versions of Tag Picker automatically.
 | Ctrl+R / Cmd+R | Switch between Add and Remove |
 | ↑ ↓ Page Up / Page Down | Move through the list |
 | Backspace (empty box) | Unpick the last picked tag |
+| F1 (or the ? button) | Help |
 | Esc | Cancel without changing anything |
 
 When you add a tag, items that already have it are left untouched.
@@ -59,7 +60,7 @@ Open **Edit → Settings** (Mac: **Zotero → Settings**) and choose **Tag Picke
   - Backspace clears a box, and Esc leaves it unchanged.
   - Letter and number keys need Ctrl or Alt (Cmd, Option or Control on a Mac), so they don't get in the way of typing.
 
-Changes take effect the next time you open the picker.
+Changes take effect the next time you open the picker. The **Tag Picker Help…** button at the top of the pane explains every setting.
 
 ## Privacy
 

@@ -8,6 +8,10 @@ var TagPicker_Prefs = {
 	init() {
 		this.message = document.getElementById("tp-shortcut-message");
 		document.getElementById("tp-browse").addEventListener("command", () => this.browse());
+		document.getElementById("tp-help").addEventListener("command", () => {
+			window.openDialog("chrome://zotero-tag-picker/content/help.xhtml", "tag-picker-help",
+				"chrome,centerscreen,resizable,dialog=no,width=580,height=640");
+		});
 		for (let [inputID, clearID] of [["tp-shortcut", "tp-shortcut-clear"],
 				["tp-remove-shortcut", "tp-remove-shortcut-clear"]]) {
 			let input = document.getElementById(inputID);

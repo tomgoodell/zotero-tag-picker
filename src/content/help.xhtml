@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8"/>
+	<title>Tag Picker Help</title>
+	<script src="chrome://zotero-tag-picker/content/help.js"/>
+	<!-- Styles stay inline: Zotero keeps a plugin's .css files cached until it restarts -->
+	<style><![CDATA[
+		:root {
+			color-scheme: light dark;
+		}
+		html, body {
+			margin: 0;
+			height: 100%;
+			background: Canvas;
+			color: CanvasText;
+			font: message-box;
+			font-size: 13px;
+		}
+		body {
+			display: flex;
+			flex-direction: column;
+		}
+		#help-text {
+			flex: 1;
+			overflow-y: auto;
+			padding: 4px 20px 12px;
+			line-height: 1.45;
+		}
+		h1 {
+			font-size: 18px;
+			margin: 12px 0 4px;
+		}
+		h2 {
+			font-size: 14px;
+			margin: 18px 0 4px;
+			padding-top: 8px;
+			border-top: 1px solid color-mix(in srgb, CanvasText 15%, transparent);
+		}
+		p, ul {
+			margin: 4px 0 8px;
+		}
+		ul {
+			padding-left: 20px;
+		}
+		li {
+			margin: 2px 0;
+		}
+		kbd {
+			font: inherit;
+			font-size: 12px;
+			padding: 0 4px;
+			border: 1px solid color-mix(in srgb, CanvasText 30%, transparent);
+			border-radius: 3px;
+			background: color-mix(in srgb, CanvasText 6%, Canvas);
+			white-space: nowrap;
+		}
+		table {
+			border-collapse: collapse;
+			margin: 4px 0 8px;
+		}
+		td {
+			padding: 3px 12px 3px 0;
+			vertical-align: top;
+		}
+		td:first-child {
+			white-space: nowrap;
+		}
+		.muted {
+			opacity: 0.75;
+		}
+		#help-footer {
+			display: flex;
+			justify-content: flex-end;
+			padding: 8px 16px;
+			border-top: 1px solid color-mix(in srgb, CanvasText 15%, transparent);
+		}
+	]]></style>
+</head>
+<body>
+	<div id="help-text">
+		<h1>Tag Picker</h1>
+		<p>Search for tags and add them to, or remove them from, every selected item at once.</p>
+
+		<h2>Opening it</h2>
+		<ul>
+			<li>Select one or more items, then press the Add shortcut (standard: <kbd><span class="accel">Ctrl</span>+<span class="alt">Alt</span>+T</kbd>), or right-click and choose <b>Add Tags…</b> or <b>Remove Tags…</b>.</li>
+			<li>A Remove shortcut can be set in Settings; it's off until you do.</li>
+		</ul>
+
+		<h2>Adding tags</h2>
+		<ul>
+			<li>Type to narrow the list. Matches at the start of a tag come first, then the start of a word, then anywhere.</li>
+			<li>Click a tag, or press <kbd>Enter</kbd>, to pick it. Pick as many as you like; they collect under <b>Adding:</b>.</li>
+			<li>To make a new tag, type it and pick <b>Create “…”</b> at the bottom of the list.</li>
+			<li>Press <kbd>Enter</kbd> on an empty box, <kbd><span class="accel">Ctrl</span>+Enter</kbd>, or click <b>Add</b> to put the picked tags on every selected item.</li>
+		</ul>
+
+		<h2>Removing tags</h2>
+		<ul>
+			<li>Click <b>Remove tags</b> at the top, or press <kbd><span class="accel">Ctrl</span>+R</kbd>. The button turns red.</li>
+			<li>The list then shows only the tags on the selected items, with how many of them have each one (“3 of 5”).</li>
+			<li>Pick the tags to take off and press <b>Remove</b>. They come off every selected item that has them.</li>
+			<li>Switching between Add and Remove clears your picks, so you never mix the two by accident.</li>
+		</ul>
+
+		<h2>Keys in the picker</h2>
+		<table>
+			<tr><td><kbd>Enter</kbd> or a click</td><td>Pick the highlighted tag</td></tr>
+			<tr><td><kbd>Enter</kbd> on an empty box</td><td>Apply (when you haven't arrowed to a tag)</td></tr>
+			<tr><td><kbd><span class="accel">Ctrl</span>+Enter</kbd></td><td>Apply, always</td></tr>
+			<tr><td><kbd>↑</kbd> <kbd>↓</kbd> <kbd>Page Up</kbd> <kbd>Page Down</kbd></td><td>Move through the list</td></tr>
+			<tr><td><kbd>Backspace</kbd> on an empty box</td><td>Unpick the last tag (or click its ×)</td></tr>
+			<tr><td><kbd><span class="accel">Ctrl</span>+R</kbd></td><td>Switch between Add and Remove</td></tr>
+			<tr><td><kbd>F1</kbd></td><td>This help</td></tr>
+			<tr><td><kbd>Esc</kbd></td><td>Close without changing anything</td></tr>
+		</table>
+
+		<h2>Undo</h2>
+		<p>Each add or remove is one step in Zotero's own <b>Edit › Undo</b> (<kbd><span class="accel">Ctrl</span>+Z</kbd>), however many items it touched. Redo works too.</p>
+
+		<h2>Where tags come from</h2>
+		<ul>
+			<li><b>Tags already used in this library</b>: every tag on at least one item in the library you're working in (My Library, or the group the selected items belong to). Tags from your other libraries and tags only on items in the trash aren't offered. Colored tags are always offered. The list grows by itself as you tag.</li>
+			<li><b>A text file of tags</b>: only the tags in a plain text file you keep, one tag per line. Handy for a fixed vocabulary, or for one list shared across libraries and computers.</li>
+			<li><b>Both, merged</b>: everything from the library plus everything in the file, each tag shown once. Usage counts come from the library.</li>
+			<li><b>Save newly typed tags to the tag file</b>: when the file is a source, tags you create in the picker are added to it.</li>
+		</ul>
+		<p>These choices only affect adding. Remove always lists exactly the tags on the selected items.</p>
+
+		<h2>Automatic tags</h2>
+		<p>Zotero has two kinds of tags. <b>Manual tags</b> are the ones you add. <b>Automatic tags</b> are added by Zotero when you import an item, from the keywords a publisher or database supplies (for example “Humans” or “Adult” from PubMed); Zotero's tag pane shows them in orange.</p>
+		<ul>
+			<li>Unticked (standard): the list offers only manual tags, so it stays your own vocabulary. Libraries with many imports can have thousands of automatic tags.</li>
+			<li>Ticked: automatic tags in the library are offered too, with their usage counts.</li>
+			<li>Either way, a tag you pick is added as a <b>manual</b> tag, in your capitalization setting.</li>
+		</ul>
+		<p class="muted">To stop Zotero adding automatic tags at all: Zotero Settings › General › “Automatically tag items with keywords and subject headings”.</p>
+
+		<h2>Capitalization</h2>
+		<p>Every tag the picker adds, and the way the list is shown, follows this setting: lowercase, UPPERCASE, Capitalize Each Word, or exactly as typed. It keeps a library consistent, so “Leadership” and “leadership” don't become two tags. Tags already on your items are never renamed.</p>
+
+		<h2>Colored tags</h2>
+		<p>Tags you've given a color in Zotero's tag pane show their color as a dot. With “Show colored tags first” ticked, they head the list in their number-key order. They always keep their exact name, whatever the capitalization setting.</p>
+
+		<h2>List order</h2>
+		<p>Most-used first (by how many items in the library have the tag) or alphabetical.</p>
+
+		<h2>Keyboard shortcuts</h2>
+		<ul>
+			<li>In Settings, click a shortcut box and press the keys you want. The box records the keys; typing their names doesn't work.</li>
+			<li><kbd>Backspace</kbd> clears a box; <kbd>Esc</kbd> leaves it as it was.</li>
+			<li>A letter or number key needs <span class="accel">Ctrl</span> or <span class="alt">Alt</span> with it, so it doesn't get in the way of typing. Function keys can be used on their own.</li>
+			<li>Letter shortcuts are ignored while you're typing in a note or a field.</li>
+			<li>Avoid shortcuts Zotero already uses, such as <kbd><span class="accel">Ctrl</span>+Shift+</kbd> with most letters.</li>
+		</ul>
+
+		<h2>Finding items with no tags</h2>
+		<p>Zotero can do this itself: <b>Edit › Advanced Search</b>, set <b>Tag</b> › <b>does not contain</b> › <kbd>%</kbd>, then <b>Save Search</b> to keep it in the sidebar.</p>
+	</div>
+	<div id="help-footer">
+		<button id="help-close">Close</button>
+	</div>
+</body>
+</html>

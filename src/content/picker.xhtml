@@ -209,6 +209,12 @@
 			gap: 8px;
 		}
 
+		#tp-help {
+			min-width: 0;
+			padding: 2px 9px;
+			font-weight: bold;
+		}
+
 		#tp-status {
 			flex: 1;
 			font-size: 11px;
@@ -232,6 +238,7 @@
 			<html:div id="tp-chosen"/>
 		</html:div>
 		<html:div id="tp-footer">
+			<html:button id="tp-help" title="Help (F1)">?</html:button>
 			<html:span id="tp-status"/>
 			<html:button id="tp-cancel">Cancel</html:button>
 			<html:button id="tp-apply" class="primary">Add</html:button>
