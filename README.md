@@ -52,9 +52,10 @@ Open **Edit → Settings** (Mac: **Zotero → Settings**) and choose **Tag Picke
   - **A text file of tags**, one per line. Only the tags in your file are offered, which is handy for a fixed vocabulary or for sharing one list across libraries and computers.
   - **Both, merged**: everything from both, with duplicates shown once.
   - You can choose whether new tags you type are saved to the text file.
+  - You can also switch the source and automatic tags in the picker itself, with the **From: File · Library · Both** buttons and the **Automatic tags** box at the top. That choice is saved as the setting.
   - Remove mode always lists exactly the tags on the selected items.
 - **Capitalization**: always lowercase (the default), ALWAYS UPPERCASE, Capitalize Each Word, or exactly as typed. Existing tags are shown and added in the chosen style. Colored tags always keep their exact name.
-- **List order**: most-used first, or alphabetical. Optionally, colored tags come first.
+- **List order**: most-used first, or alphabetical. Optionally, colored tags come first. The picker's **Sort** buttons change it too.
 - **Keyboard shortcuts**: there's one for opening in Add mode and one for opening in Remove mode, which is off by default.
   - Click a box and press the keys you want.
   - Backspace clears a box, and Esc leaves it unchanged.

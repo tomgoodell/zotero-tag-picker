@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.0
+
+- **Change how the list is built from the picker itself**: new **From: File · Library · Both** buttons, **Sort: Most used · A–Z** buttons and an **Automatic tags** box at the top of the picker (Add mode). The list updates at once, keeping your search and picks, and each choice is saved as the setting.
+- The **?** Help button moved to the top row. The top row wraps onto more lines when the window is narrow.
+
 ## 1.3.0 — first public release
 
 - Search-and-pick window for adding tags to every selected item at once.

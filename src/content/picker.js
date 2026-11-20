@@ -16,22 +16,30 @@ var TagPickerDialog = {
 	newTags: [],    // chosen tags that weren't in the list
 	highlight: 0,
 	navigated: false, // arrowed through the list since the last search change
+	// How the Add list is built: { source: library|file|both, includeAutomatic, sortOrder: frequency|alpha }
+	settings: null,
+	rebuilds: 0,      // counts setting changes, so a slow rebuild can't overwrite a newer one
 
 	init() {
 		this.io = window.arguments[0];
-		let copy = (list) => list.map(e => ({ tag: e.tag, count: e.count, color: e.color, position: e.position }));
-		this.lists = { add: copy(this.io.list), remove: copy(this.io.removeList) };
+		this.lists = { add: this.copy(this.io.list), remove: this.copy(this.io.removeList) };
+		let s = this.io.settings;
+		this.settings = { source: s.source, includeAutomatic: s.includeAutomatic, sortOrder: s.sortOrder };
 
 		this.search = document.getElementById("tp-search");
 		this.listEl = document.getElementById("tp-list");
 		this.chosenEl = document.getElementById("tp-chosen");
 		this.applyBtn = document.getElementById("tp-apply");
+		this.autoBox = document.getElementById("tp-auto");
 
-		if (this.io.warning) {
-			let w = document.getElementById("tp-warning");
-			w.textContent = this.io.warning;
-			w.hidden = false;
+		this.showWarning(this.io.warning);
+		for (let [name, values] of Object.entries(this.choices)) {
+			for (let v of values) {
+				document.getElementById(`tp-${name}-${v}`).addEventListener("click", () => this.change(name, v));
+			}
 		}
+		this.autoBox.addEventListener("change", () => this.change("includeAutomatic", this.autoBox.checked));
+		this.renderSettings();
 		let n = this.io.itemCount;
 		document.getElementById("tp-status").textContent =
 			`${n} item${n == 1 ? "" : "s"} selected · v${this.io.version}`;
@@ -54,6 +62,60 @@ var TagPickerDialog = {
 
 	get all() {
 		return this.lists[this.mode];
+	},
+
+	// Own copies of the lists the main window built
+	copy(list) {
+		return list.map(e => ({ tag: e.tag, count: e.count, color: e.color, position: e.position }));
+	},
+
+	showWarning(text) {
+		let w = document.getElementById("tp-warning");
+		w.textContent = text || "";
+		w.hidden = !text;
+	},
+
+	// The button groups in the top row: setting -> its values (button ids are tp-<setting>-<value>)
+	choices: {
+		source: ["file", "library", "both"],
+		sortOrder: ["frequency", "alpha"]
+	},
+
+	renderSettings() {
+		for (let [name, values] of Object.entries(this.choices)) {
+			for (let v of values) {
+				let btn = document.getElementById(`tp-${name}-${v}`);
+				btn.classList.toggle("selected", v == this.settings[name]);
+				btn.setAttribute("aria-pressed", v == this.settings[name]);
+			}
+		}
+		this.autoBox.checked = this.settings.includeAutomatic;
+	},
+
+	// Change how the Add list is built. The choice is saved as the setting.
+	async change(name, value) {
+		this.search.focus();
+		if (this.settings[name] == value) return;
+		this.settings[name] = value;
+		this.renderSettings();
+		let ticket = ++this.rebuilds;
+		let built = await this.io.rebuild({ ...this.settings });
+		if (ticket != this.rebuilds || window.closed) return;
+		if (!built) {
+			this.showWarning("Couldn't rebuild the tag list — see Help › Debug Output Logging.");
+			return;
+		}
+		let list = this.copy(built.list);
+		// Keep every pick, even one the new source doesn't offer: it's still a tag to add
+		for (let tag of this.mode == "add" ? this.chosen : []) {
+			if (!list.some(e => e.tag == tag)) list.push({ tag, count: 0, color: null, position: 0 });
+		}
+		this.lists.add = list;
+		this.showWarning(built.warning);
+		if (this.mode == "add") {
+			this.refilter();
+			this.renderChosen();
+		}
 	},
 
 	setMode(mode) {

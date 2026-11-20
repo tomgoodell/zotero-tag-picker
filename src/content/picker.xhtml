@@ -33,53 +33,104 @@
 			font-size: 13px;
 		}
 
-		#tp-modes {
+		/* Add/Remove, the Add list's source, automatic tags and Help, wrapping onto
+		   more lines as the window narrows */
+		#tp-topbar {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 6px 12px;
+		}
+
+		.tp-seg {
 			display: flex;
 			gap: 0;
 		}
 
+		#tp-modes {
+			flex: 1 1 190px;
+		}
+
+		.tp-seg.tp-option {
+			flex: none;
+			align-items: center;
+		}
+
+		/* Remove mode lists the tags on the items, so how the Add list is built doesn't apply */
+		.tp-removing #tp-topbar .tp-option {
+			display: none;
+		}
+
+		.tp-seg-label {
+			margin-right: 5px;
+			opacity: 0.8;
+		}
+
 		/* The ID in each selector outranks Zotero's own button styles, which otherwise
-		   paint both buttons alike */
-		#tp-modes .tp-mode {
+		   paint all the buttons alike */
+		#tp-topbar .tp-seg > button {
 			appearance: none;
-			flex: 1;
 			margin: 0;
 			padding: 5px 8px;
 			border: 1px solid color-mix(in srgb, CanvasText 30%, transparent);
 			background: color-mix(in srgb, CanvasText 6%, Canvas);
 			color: color-mix(in srgb, CanvasText 65%, transparent);
 			font-weight: normal;
+			white-space: nowrap;
 		}
 
-		#tp-modes .tp-mode:first-child {
+		#tp-topbar #tp-modes > button {
+			flex: 1;
+		}
+
+		#tp-topbar .tp-option > button {
+			padding: 4px 8px;
+			font-size: 12px;
+		}
+
+		#tp-topbar .tp-seg > button:first-of-type {
 			border-radius: 4px 0 0 4px;
 		}
 
-		#tp-modes .tp-mode:last-child {
-			border-radius: 0 4px 4px 0;
+		#tp-topbar .tp-seg > button:not(:first-of-type) {
 			border-left: none;
 		}
 
-		#tp-modes .tp-mode:hover {
+		#tp-topbar .tp-seg > button:last-of-type {
+			border-radius: 0 4px 4px 0;
+		}
+
+		#tp-topbar .tp-seg > button:hover {
 			background: color-mix(in srgb, SelectedItem 15%, Canvas);
 		}
 
-		#tp-modes .tp-mode.selected {
+		#tp-topbar .tp-seg > button.selected {
 			background: SelectedItem;
 			color: SelectedItemText;
 			border-color: SelectedItem;
 			font-weight: bold;
 		}
 
-		#tp-modes .tp-mode.selected::before {
+		#tp-topbar #tp-modes > button.selected::before {
 			content: "✓ ";
 		}
 
 		/* Remove mode: red, so it's obvious tags are coming off */
-		.tp-removing #tp-modes .tp-mode.selected {
+		.tp-removing #tp-topbar #tp-modes > button.selected {
 			background: #c0392b;
 			border-color: #c0392b;
 			color: #fff;
+		}
+
+		#tp-auto-label {
+			display: flex;
+			align-items: center;
+			gap: 4px;
+			white-space: nowrap;
+		}
+
+		#tp-auto {
+			margin: 0;
 		}
 
 		/* Remove mode: tint the picks so it's obvious they're coming off */
@@ -108,9 +159,11 @@
 			font-style: italic;
 		}
 
+		/* No margin: Zotero's input style adds one, which pushed the box past the list's right edge */
 		#tp-search {
 			width: 100%;
 			box-sizing: border-box;
+			margin: 0;
 			font-size: 14px;
 			padding: 6px 8px;
 		}
@@ -211,6 +264,7 @@
 
 		#tp-help {
 			min-width: 0;
+			margin: 0 0 0 auto;
 			padding: 2px 9px;
 			font-weight: bold;
 		}
@@ -223,9 +277,27 @@
 	]]></html:style>
 
 	<html:div id="tp-root">
-		<html:div id="tp-modes" role="tablist">
-			<html:button id="tp-mode-add" class="tp-mode" role="tab">Add tags</html:button>
-			<html:button id="tp-mode-remove" class="tp-mode" role="tab">Remove tags</html:button>
+		<html:div id="tp-topbar">
+			<html:div id="tp-modes" class="tp-seg" role="tablist">
+				<html:button id="tp-mode-add" class="tp-mode" role="tab">Add tags</html:button>
+				<html:button id="tp-mode-remove" class="tp-mode" role="tab">Remove tags</html:button>
+			</html:div>
+			<html:div id="tp-sources" class="tp-seg tp-option" role="group" aria-label="Tags from">
+				<html:span class="tp-seg-label">From:</html:span>
+				<html:button id="tp-source-file" title="Only the tags in your tag file">File</html:button>
+				<html:button id="tp-source-library" title="Tags already used in this library">Library</html:button>
+				<html:button id="tp-source-both" title="The library and the tag file, merged">Both</html:button>
+			</html:div>
+			<html:div id="tp-sort" class="tp-seg tp-option" role="group" aria-label="Sort">
+				<html:span class="tp-seg-label">Sort:</html:span>
+				<html:button id="tp-sortOrder-frequency" title="Tags on the most items first">Most used</html:button>
+				<html:button id="tp-sortOrder-alpha" title="Alphabetical">A–Z</html:button>
+			</html:div>
+			<html:label id="tp-auto-label" class="tp-option" title="Also offer automatic tags (added by Zotero from publisher and database keywords)">
+				<html:input id="tp-auto" type="checkbox"/>
+				Automatic tags
+			</html:label>
+			<html:button id="tp-help" title="Help (F1)">?</html:button>
 		</html:div>
 		<html:div id="tp-header">
 			<html:input id="tp-search" type="text" autocomplete="off"/>
@@ -238,7 +310,6 @@
 			<html:div id="tp-chosen"/>
 		</html:div>
 		<html:div id="tp-footer">
-			<html:button id="tp-help" title="Help (F1)">?</html:button>
 			<html:span id="tp-status"/>
 			<html:button id="tp-cancel">Cancel</html:button>
 			<html:button id="tp-apply" class="primary">Add</html:button>

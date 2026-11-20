@@ -349,6 +349,25 @@ TagPicker = {
 			list,
 			removeList: this.tagsOnItems(items, colors),
 			warning,
+			settings: {
+				source: this.pref("source"),
+				includeAutomatic: !!this.pref("includeAutomatic"),
+				sortOrder: this.pref("sortOrder")
+			},
+			// The picker's source, automatic-tags and sort controls: save the choices as the
+			// settings (so the next picker, and Settings, show them) and rebuild the Add list
+			rebuild: async (settings) => {
+				for (let name of ["source", "includeAutomatic", "sortOrder"]) {
+					Zotero.Prefs.set(this.PREF + name, settings[name], true);
+				}
+				try {
+					return await this.buildList(libraryID, colors);
+				}
+				catch (e) {
+					Zotero.logError(e);
+					return null;
+				}
+			},
 			itemCount: items.length,
 			version: this.version,
 			applyCase: (t) => this.applyCase(t),
@@ -369,6 +388,7 @@ TagPicker = {
 		}
 		let changed = await this.applyTags(items, result.tags);
 		this.notify(win, `Added ${this._tagWords(result.tags)} to ${this._itemWords(changed)}.`, changed, prevFocus);
+		// Read after the picker closes: its source buttons may have changed it
 		let source = this.pref("source");
 		if (result.newTags.length && this.pref("saveNewToFile") && (source == "file" || source == "both")) {
 			try {
