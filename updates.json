@@ -3,9 +3,9 @@
     "tag-picker@tomgoodell.github.io": {
       "updates": [
         {
-          "version": "1.3.0",
-          "update_link": "https://github.com/tomgoodell/zotero-tag-picker/releases/download/v1.3.0/zotero-tag-picker-1.3.0.xpi",
-          "update_hash": "sha256:ba1bfd554216f99165924856200ab7dee2210d50a765b0fc689124830d0e81c2",
+          "version": "1.4.0",
+          "update_link": "https://github.com/tomgoodell/zotero-tag-picker/releases/download/v1.4.0/zotero-tag-picker-1.4.0.xpi",
+          "update_hash": "sha256:76faa680beefc725404e79acf4228e2927cb4711ca1279faa448cdc4bbd19e3c",
           "applications": {
             "zotero": {
               "strict_min_version": "10.0",
